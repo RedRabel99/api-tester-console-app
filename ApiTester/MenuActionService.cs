@@ -2,24 +2,24 @@
 
 public class MenuActionService
 {
-    private List<MenuAction> _menuActions;
+    private readonly List<MenuAction> _menuActions;
 
     public MenuActionService()
     {
         _menuActions = new List<MenuAction>();
     }
 
-    public void AddNewAction(int id, string name, string menuName)
+    public void AddNewAction(int id, string name, Menu menuType)
     {
-        _menuActions.Add(new MenuAction(id, name, menuName));
+        _menuActions.Add(new MenuAction(id, name, menuType));
     }
 
-    public List<MenuAction> GetMenuActionsByMenuName(string menuName)
+    public List<MenuAction> GetMenuActionsByMenuType(Menu menuType)
     {
         var result = new List<MenuAction>();
         foreach (var menuAction in _menuActions)
         {
-            if (menuAction.MenuName == menuName) result.Add(menuAction);
+            if (menuAction.MenuType == menuType) result.Add(menuAction);
         }
 
         return result;
