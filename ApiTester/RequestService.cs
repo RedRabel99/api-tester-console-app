@@ -9,7 +9,6 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
     private IHttpClientFactory _httpClientFactory = httpClientFactory;
     private MenuActionService _menuActionService = menuActionService;
     
-
     private async Task PrintResponse(HttpResponseMessage response)
     {
         Console.WriteLine($"StatusCode: {response.StatusCode}");
@@ -44,11 +43,9 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
         catch (HttpRequestException e)
         {
             Console.WriteLine($"An error occurred while sending the request: {e.Message}");
-            // Handle the exception as needed, e.g., log the error, retry logic, etc.
         }
     }
-
-
+    
     public HttpRequestMessage QuickRequestView()
     {
         var requestBuilder = new HttpRequestBuilder();

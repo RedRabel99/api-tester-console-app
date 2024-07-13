@@ -20,7 +20,7 @@
                 await MainMenuView();
             }
         }
-
+        
         public static ConsoleKeyInfo HandleMenu(List<MenuAction> currentMenu)
         {
             Console.WriteLine("----------");
@@ -87,11 +87,13 @@
 
         private void CollectionsMenuView()
         {
+            Console.WriteLine("Not implemented");
             // Implement Collections menu functionality
         }
 
         private void EditConfigurationMenuView()
         {
+            Console.WriteLine("Not implemented");
             // Implement Edit configuration menu functionality
         }
 
@@ -100,7 +102,7 @@
             Environment.Exit(0);
         }
 
-        public static void PrintMenu(List<MenuAction> menuActions)
+        private static void PrintMenu(List<MenuAction> menuActions)
         {
             foreach (var menuAction in menuActions)
             {
