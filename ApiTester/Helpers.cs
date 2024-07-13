@@ -3,15 +3,8 @@
 public enum Menu
 {
     Main,
-    Request,
+    CustomRequest,
+    MethodType,
+    Confirm,
     Collection
-}
-
-public enum HttpMethod
-{
-    Get,
-    Post,
-    Put,
-    Patch,
-    Delete
 }

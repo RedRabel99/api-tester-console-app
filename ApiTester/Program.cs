@@ -12,15 +12,15 @@ class Program
         ConfigureServices(serviceCollection);
         var services = serviceCollection.BuildServiceProvider();
        
-       var appController = services.GetRequiredService<AppController>();
+       var appController = services.GetRequiredService<MenuManager>();
        appController.RunApp().Wait();
     }
 
     private static void ConfigureServices(ServiceCollection services)
     {
         services.AddHttpClient();
-        services.AddTransient<MenuActionService>();
+        services.AddSingleton<MenuActionService>();
         services.AddTransient<RequestService>();
-        services.AddTransient<AppController>();
+        services.AddTransient<MenuManager>();
     }
 }

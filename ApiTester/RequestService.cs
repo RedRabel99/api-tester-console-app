@@ -4,53 +4,88 @@ using Microsoft.Extensions.Primitives;
 
 namespace api_tester_console_app;
 
-public class RequestService
+public class RequestService(IHttpClientFactory httpClientFactory, MenuActionService menuActionService)
 {
-    private IHttpClientFactory _httpClientFactory;
-
-    public RequestService(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
-
-    public async Task SendRequestView(HttpMethod method)
-    {
-        var client = _httpClientFactory.CreateClient();
-        Console.WriteLine("Enter Uri");
-        var uri = Console.ReadLine();
-        switch (method)
-        {
-            case HttpMethod.Get:
-                var response = await client.GetAsync(uri);
-                await PrintResponse(response);
-                break;
-            case HttpMethod.Post:
-                break;
-            case HttpMethod.Delete:
-                break;
-            case HttpMethod.Patch:
-                break;
-            case HttpMethod.Put:
-                break;
-            default:
-                Console.WriteLine("Invalid method");
-                break;
-        }
-    }
+    private IHttpClientFactory _httpClientFactory = httpClientFactory;
+    private MenuActionService _menuActionService = menuActionService;
+    
 
     private async Task PrintResponse(HttpResponseMessage response)
     {
-      
         Console.WriteLine($"StatusCode: {response.StatusCode}");
         var content = await response.Content.ReadAsStringAsync();
-        var endOfContent = content.Length > 300 ? "..." : "";
-        Console.WriteLine($"Content: {content.Substring(0, 300)}{endOfContent}");
+        
+        if (content.Length > 300)
+        {
+            Console.WriteLine($"Content: {content[..300]}...");
+        }
+        else
+        {
+            Console.WriteLine($"Content: {content}");
+        }
         var headers = response.Headers;
         Console.Write("Headers: ");
         foreach (var header in headers)
         {
-            Console.Write($"[{header.Key}, {header.Value}]");
+            Console.Write($"[{header.Key}, {header.Value.FirstOrDefault()}]");
         }
         Console.WriteLine();
-    } 
+    }
+
+    public async Task SendRequestAsync(HttpRequestMessage httpRequestMessage)
+    {
+        var client = _httpClientFactory.CreateClient();
+
+        try
+        {
+            var response = await client.SendAsync(httpRequestMessage);
+            await PrintResponse(response);
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"An error occurred while sending the request: {e.Message}");
+            // Handle the exception as needed, e.g., log the error, retry logic, etc.
+        }
+    }
+
+
+    public HttpRequestMessage QuickRequestView()
+    {
+        var requestBuilder = new HttpRequestBuilder();
+        Console.WriteLine("Enter uri");
+        requestBuilder.SetUri(Console.ReadLine() ?? string.Empty);
+        var method = GetMethod();
+        requestBuilder.SetMethod(method);
+        if (method != HttpMethod.Post && method != HttpMethod.Put && method != HttpMethod.Patch)
+        {
+            return requestBuilder.Build();
+        }
+        Console.WriteLine("Enter content body");
+        var content = Console.ReadLine();
+        requestBuilder.SetContent(content ?? string.Empty);
+
+        return requestBuilder.Build();
+    }
+
+    private HttpMethod GetMethod()
+    {
+        var methodMenu = _menuActionService.GetMenuActionsByMenuType(Menu.MethodType);
+        var operation = MenuManager.HandleMenu(methodMenu);
+        switch (operation.KeyChar)
+        {
+            case '1':
+                return HttpMethod.Get;
+            case '2':
+                return HttpMethod.Post;
+            case '3':
+                return HttpMethod.Delete;
+            case '4':
+                return HttpMethod.Put;
+            case '5':
+                return HttpMethod.Patch;
+            default:
+                Console.WriteLine("Invalid selection. Default: GET");
+                return HttpMethod.Get;
+        }
+    }
 }
