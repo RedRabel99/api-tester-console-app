@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text;
 
 namespace api_tester_console_app;
 
@@ -36,9 +38,9 @@ public class HttpRequestBuilder
         _userAgent = userAgent;
     }
 
-    public void SetContent(string content)
+    public void SetContent(string content, string contentType)
     {
-        _content = new StringContent(content);
+        _content = new StringContent(content, Encoding.UTF8, contentType);
     }
 
     public HttpRequestMessage Build()

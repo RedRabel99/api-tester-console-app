@@ -4,10 +4,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace api_tester_console_app;
 
-public class RequestService(IHttpClientFactory httpClientFactory, MenuActionService menuActionService)
+public class RequestService(IHttpClientFactory httpClientFactory, MenuActionService menuActionService, FileService fileService)
 {
     private IHttpClientFactory _httpClientFactory = httpClientFactory;
     private MenuActionService _menuActionService = menuActionService;
+    private FileService _fileService = fileService;
     
     private async Task PrintResponse(HttpResponseMessage response)
     {
@@ -58,12 +59,24 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
             return requestBuilder.Build();
         }
         Console.WriteLine("Enter content body");
-        var content = Console.ReadLine();
-        requestBuilder.SetContent(content ?? string.Empty);
+        var content = GetContent();
+        requestBuilder.SetContent(content ?? string.Empty, "application/json");
 
         return requestBuilder.Build();
     }
 
+    private string? GetContent()
+    {
+        Console.WriteLine("Do you want to read content from file?");
+        
+        if (!MenuManager.GetConfirmation())
+        {
+            Console.WriteLine("Enter content body");
+            return Console.ReadLine();
+        }
+
+        return _fileService.GetFileContentView();
+    }
     private HttpMethod GetMethod()
     {
         var methodMenu = _menuActionService.GetMenuActionsByMenuType(Menu.MethodType);

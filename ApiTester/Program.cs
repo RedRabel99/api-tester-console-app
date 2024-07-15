@@ -22,5 +22,6 @@ class Program
         services.AddSingleton<MenuActionService>();
         services.AddTransient<RequestService>();
         services.AddTransient<MenuManager>();
+        services.AddTransient<FileService>();
     }
 }
