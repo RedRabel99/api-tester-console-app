@@ -58,9 +58,17 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
         {
             return requestBuilder.Build();
         }
+
+        Console.WriteLine("Do you want to add content body?");
+        if (!MenuManager.GetConfirmation())
+        {
+            return requestBuilder.Build();
+        }
+
+        var contentType = GetContentType();
         Console.WriteLine("Enter content body");
         var content = GetContent();
-        requestBuilder.SetContent(content ?? string.Empty, "application/json");
+        requestBuilder.SetContent(content ?? string.Empty, contentType);
 
         return requestBuilder.Build();
     }
@@ -76,6 +84,35 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
         }
 
         return _fileService.GetFileContentView();
+    }
+
+    private string GetContentType()
+    {
+        Console.WriteLine("Select content type");
+        var contentTypeMenu = _menuActionService.GetMenuActionsByMenuType(Menu.ContentType);
+        var operation = MenuManager.HandleMenu(contentTypeMenu);
+        switch (operation.KeyChar)
+        {
+            case '1':
+                return "application/json";
+            case '2':
+                return "text/html";
+            case '3':
+                return "application/xml";
+            case '4':
+                return "text/plain";
+            case '5':
+                return "application/x-www-form-urlcoded";
+            default:
+                Console.WriteLine("Enter your content type");
+                return Console.ReadLine() ?? string.Empty;
+        }
+        /* "JSON (application/json)", Menu.ContentType);
+            "HTML (text/html)", Menu.ContentType);
+            3, "XML (application/xml)", Menu.ContentType);
+            4, "TEXT (text/plain)", Menu.ContentType);
+            5, "FORM URL Encoded (application/x-www-form-urlencoded)", Menu.ContentType);
+            6, "Custom",*/
     }
     private HttpMethod GetMethod()
     {

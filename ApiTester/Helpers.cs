@@ -5,6 +5,7 @@ public enum Menu
     Main,
     CustomRequest,
     MethodType,
+    ContentType,
     Confirm,
     Collection
 }

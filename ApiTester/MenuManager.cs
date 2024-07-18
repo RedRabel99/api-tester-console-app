@@ -142,6 +142,13 @@
 
             _menuActionService.AddNewAction(1, "Quick request", Menu.CustomRequest);
             _menuActionService.AddNewAction(2, "Advanced request", Menu.CustomRequest);
+            
+            _menuActionService.AddNewAction(1, "JSON (application/json)", Menu.ContentType);
+            _menuActionService.AddNewAction(2, "HTML (text/html)", Menu.ContentType);
+            _menuActionService.AddNewAction(3, "XML (application/xml)", Menu.ContentType);
+            _menuActionService.AddNewAction(4, "TEXT (text/plain)", Menu.ContentType);
+            _menuActionService.AddNewAction(5, "FORM URL Encoded (application/x-www-form-urlencoded)", Menu.ContentType);
+            _menuActionService.AddNewAction(6, "Custom", Menu.ContentType);
         }
     }
 }
