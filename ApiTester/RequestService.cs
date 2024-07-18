@@ -107,12 +107,6 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
                 Console.WriteLine("Enter your content type");
                 return Console.ReadLine() ?? string.Empty;
         }
-        /* "JSON (application/json)", Menu.ContentType);
-            "HTML (text/html)", Menu.ContentType);
-            3, "XML (application/xml)", Menu.ContentType);
-            4, "TEXT (text/plain)", Menu.ContentType);
-            5, "FORM URL Encoded (application/x-www-form-urlencoded)", Menu.ContentType);
-            6, "Custom",*/
     }
     private HttpMethod GetMethod()
     {
