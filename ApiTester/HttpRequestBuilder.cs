@@ -7,7 +7,7 @@ namespace api_tester_console_app;
 public class HttpRequestBuilder
 {
     private string? _uri;
-    private System.Net.Http.HttpMethod? _method;
+    private HttpMethod? _method;
     private Dictionary<string, string>? _headers;
     private AuthenticationHeaderValue? _authHeader;
     private string? _userAgent;
