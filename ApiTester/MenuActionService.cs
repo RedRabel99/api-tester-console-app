@@ -9,9 +9,9 @@ public class MenuActionService
         _menuActions = new List<MenuAction>();
     }
 
-    public void AddNewAction(int id, string name, Menu menuType)
+    public void AddNewAction(int id, string name, Menu menuType, Delegate actionToPerform)
     {
-        _menuActions.Add(new MenuAction(id, name, menuType));
+        _menuActions.Add(new MenuAction(id, name, menuType, actionToPerform));
     }
 
     public List<MenuAction> GetMenuActionsByMenuType(Menu menuType)

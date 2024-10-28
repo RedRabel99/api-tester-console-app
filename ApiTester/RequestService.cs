@@ -8,28 +8,13 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
 {
     private IHttpClientFactory _httpClientFactory = httpClientFactory;
     private MenuActionService _menuActionService = menuActionService;
-    
-    private async Task PrintResponse(HttpResponseMessage response)
+
+    public async Task QuickRequestView()
     {
-        Console.WriteLine($"StatusCode: {response.StatusCode}");
-        var content = await response.Content.ReadAsStringAsync();
-        
-        if (content.Length > 300)
-        {
-            Console.WriteLine($"Content: {content[..300]}...");
-        }
-        else
-        {
-            Console.WriteLine($"Content: {content}");
-        }
-        var headers = response.Headers;
-        Console.Write("Headers: ");
-        foreach (var header in headers)
-        {
-            Console.Write($"[{header.Key}, {header.Value.FirstOrDefault()}]");
-        }
-        Console.WriteLine();
+        var request = BuildQuickRequest();
+        await SendRequestAsync(request);
     }
+
 
     public async Task SendRequestAsync(HttpRequestMessage httpRequestMessage)
     {
@@ -45,8 +30,8 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
             Console.WriteLine($"An error occurred while sending the request: {e.Message}");
         }
     }
-    
-    public HttpRequestMessage QuickRequestView()
+
+    private HttpRequestMessage BuildQuickRequest()
     {
         var requestBuilder = new HttpRequestBuilder();
         Console.WriteLine("Enter uri");
@@ -66,8 +51,13 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
 
     private HttpMethod GetMethod()
     {
-        var methodMenu = _menuActionService.GetMenuActionsByMenuType(Menu.MethodType);
-        var operation = MenuManager.HandleMenu(methodMenu);
+        Console.WriteLine("Select method:");
+        Console.WriteLine("1. GET");
+        Console.WriteLine("2. POST");
+        Console.WriteLine("3. DELETE");
+        Console.WriteLine("4. PUT");
+        Console.WriteLine("5. PATCH");
+        var operation = Console.ReadKey();
         switch (operation.KeyChar)
         {
             case '1':
@@ -84,5 +74,26 @@ public class RequestService(IHttpClientFactory httpClientFactory, MenuActionServ
                 Console.WriteLine("Invalid selection. Default: GET");
                 return HttpMethod.Get;
         }
+    }
+    private async Task PrintResponse(HttpResponseMessage response)
+    {
+        Console.WriteLine($"StatusCode: {response.StatusCode}");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (content.Length > 300)
+        {
+            Console.WriteLine($"Content: {content[..300]}...");
+        }
+        else
+        {
+            Console.WriteLine($"Content: {content}");
+        }
+        var headers = response.Headers;
+        Console.Write("Headers: ");
+        foreach (var header in headers)
+        {
+            Console.Write($"[{header.Key}, {header.Value.FirstOrDefault()}]");
+        }
+        Console.WriteLine();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Security.Authentication.ExtendedProtection;
+using api_tester_console_app.MenuActionHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -22,5 +23,7 @@ class Program
         services.AddSingleton<MenuActionService>();
         services.AddTransient<RequestService>();
         services.AddTransient<MenuManager>();
+        services.AddTransient<MainMenuActionHandler>();
+        services.AddTransient<RequestMenuActionHandler>();
     }
 }
