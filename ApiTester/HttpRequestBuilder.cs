@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace api_tester_console_app;
 
@@ -10,6 +12,16 @@ public class HttpRequestBuilder
     private AuthenticationHeaderValue? _authHeader;
     private string? _userAgent;
     private StringContent? _content;
+    private readonly string[] contentSpecificHeaders = [
+        "content-type",
+        "content-length",
+        "content-disposition",
+        "content-encoding",
+        "content-language",
+        "content-location",
+        "content-range",
+        "content-md5"
+    ];
 
     public void SetUri(string uri)
     {
@@ -36,9 +48,9 @@ public class HttpRequestBuilder
         _userAgent = userAgent;
     }
 
-    public void SetContent(string content)
+    public void SetContent(string content, string mediaType = "text/plain")
     {
-        _content = new StringContent(content);
+        _content = new StringContent(content, Encoding.UTF8, mediaType);
     }
 
     public HttpRequestMessage Build()
@@ -73,6 +85,12 @@ public class HttpRequestBuilder
         if (_headers == null) return httpRequestMessage;
         foreach (var header in _headers)
         {
+            if(contentSpecificHeaders.Contains(header.Key.ToLower()))
+            {
+                Console.WriteLine($"Could not add {header.Key} header");
+                //TODO: Handle contenty headers accordingly
+                continue;
+            }
             httpRequestMessage.Headers.Add(header.Key, header.Value);
         }
 

@@ -26,9 +26,9 @@ public class RequestMenuActionHandler : MenuActionHandler
         await _requestService.QuickRequestView();
     }
 
-    public static void CreateAdvancedRequestView()
+    public async Task CreateAdvancedRequestView()
     {
-        Console.WriteLine("Advanced request\nNot implemented");
+        await _requestService.AdvancedRequestView();
     }
 
     public override async Task RunMenu()
