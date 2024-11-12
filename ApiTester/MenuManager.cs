@@ -1,97 +1,60 @@
 ﻿using api_tester_console_app.MenuActionHandlers;
 
-namespace api_tester_console_app
+namespace api_tester_console_app;
+
+public static class MenuManager
 {
-    public class MenuManager
+    public async static Task HandleMenuByType(Menu menuType, MenuActionService menuActionService)
     {
-        private MenuActionService _menuActionService;
-        private MainMenuActionHandler _mainMenuActions;
-
-        public MenuManager(MenuActionService menuActionService, MainMenuActionHandler mainMenuActions)
+        var currentMenu = menuActionService.GetMenuActionsByMenuType(menuType);
+        Console.WriteLine("----------");
+        PrintMenu(currentMenu);
+        Console.WriteLine("----------");
+        var maxValue = currentMenu.Count;
+        while (true)
         {
-            _menuActionService = menuActionService;
-            _mainMenuActions = mainMenuActions;
-        }
+            var operation = Console.ReadKey(true);
 
-        public async Task RunApp()
-        {
-            Console.WriteLine("Welcome to the API tester");
-            while (true)
+            if (char.IsNumber(operation.KeyChar) &&
+                (operation.KeyChar >= '1' && operation.KeyChar <= maxValue.ToString()[0]))
             {
-                await _mainMenuActions.RunMenu();
-            }
-        }
-
-        public async static Task HandleMenuByType(Menu menuType, MenuActionService menuActionService)
-        {
-            var currentMenu = menuActionService.GetMenuActionsByMenuType(menuType);
-            Console.WriteLine("----------");
-            PrintMenu(currentMenu);
-            Console.WriteLine("----------");
-            var maxValue = currentMenu.Count;
-            while (true)
-            {
-                var operation = Console.ReadKey(true);
-
-                if (char.IsNumber(operation.KeyChar) &&
-                    (operation.KeyChar >= '1' && operation.KeyChar <= maxValue.ToString()[0]))
+                var selectedAction = currentMenu[int.Parse(operation.KeyChar.ToString()) - 1];
+                if (selectedAction.ActionToPerform is Func<Task> asyncAction)
                 {
-                    var selectedAction = currentMenu[int.Parse(operation.KeyChar.ToString()) - 1];
-                    if (selectedAction.ActionToPerform is Func<Task> asyncAction)
-                    {
-                        await asyncAction();
-                    }
-                    else if (selectedAction.ActionToPerform is Action syncAction)
-                    {
-                        syncAction();
-                    }
-                    return;
+                    await asyncAction();
                 }
-            }
-        }
-
-        public static void PrintMenu(List<MenuAction> menuActions)
-        {
-            foreach (var menuAction in menuActions)
-            {
-                Console.WriteLine($"{menuAction.Id}. {menuAction.Name}");
-            }
-        }
-
-        public static bool GetConfirmation()
-        {
-            Console.WriteLine("1. Yes");
-            Console.WriteLine("2. No");
-            while (true)
-            {
-                var operation = Console.ReadKey(true);
-                switch (operation.KeyChar)
+                else if (selectedAction.ActionToPerform is Action syncAction)
                 {
-                    case '2':
-                        return false;
-                    case '1':
-                        return true;
+                    syncAction();
                 }
+                return;
             }
         }
+    }
 
-        //    private void Initialize()
-        //    {
-        //        //TODO: Create Initialize method in each menuActions classes to avoid depending on one instance of menuActionService
-        //        _menuActionService.AddNewAction(1, "Custom request", Menu.Main, _mainMenuActions.HandleRequestMenu);
-        //        _menuActionService.AddNewAction(2, "Collections", Menu.Main, _mainMenuActions.ShowCollections);
-        //        _menuActionService.AddNewAction(3, "Edit configuration", Menu.Main, _mainMenuActions.EditConfiguration);
-        //        _menuActionService.AddNewAction(4, "Exit", Menu.Main, MainMenuActions.ExitApp);
+    public static void PrintMenu(List<MenuAction> menuActions)
+    {
+        foreach (var menuAction in menuActions)
+        {
+            Console.WriteLine($"{menuAction.Id}. {menuAction.Name}");
+        }
+    }
 
-        //        _menuActionService.AddNewAction(1, "GET request", Menu.MethodType, () => { });
-        //        _menuActionService.AddNewAction(2, "POST request", Menu.MethodType, () => { });
-        //        _menuActionService.AddNewAction(3, "DELETE request", Menu.MethodType, () => { });
-        //        _menuActionService.AddNewAction(4, "PUT request", Menu.MethodType, () => { });
-        //        _menuActionService.AddNewAction(5, "PATCH request", Menu.MethodType, () => { });
-
-        //        _menuActionService.AddNewAction(1, "Quick request", Menu.CustomRequest, RequestMenuActions.CreateQuickRequestView);
-        //        _menuActionService.AddNewAction(2, "Advanced request", Menu.CustomRequest, RequestMenuActions.CreateAdvancedRequestView);
-        //    }
-        //}
+    public static bool GetConfirmation(string question)
+    {
+        Console.WriteLine(question);
+        Console.WriteLine("1. Yes");
+        Console.WriteLine("2. No");
+        while (true)
+        {
+            var operation = Console.ReadKey(true);
+            switch (operation.KeyChar)
+            {
+                case '2':
+                    return false;
+                case '1':
+                    return true;
+            }
+        }
     }
 }
